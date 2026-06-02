@@ -8,29 +8,73 @@
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            background: #070b1a;
+            color: white;
             margin: 0;
             padding: 20px;
         }
 
         h1 {
-            color: #1e3a8a;
+            color: #7dd3fc;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: #e5e7eb;
         }
 
         #score {
             font-size: 22px;
             font-weight: bold;
             margin-bottom: 10px;
+            color: #facc15;
         }
 
         #game {
             width: 800px;
             height: 300px;
-            border: 3px solid black;
-            background: white;
+            border: 3px solid #7dd3fc;
+            background: #020617;
             margin: auto;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 0 25px rgba(125, 211, 252, 0.45);
+        }
+
+        #game::before {
+            content: "NaN     0.72     bias     NULL     95% CI     p=0.06     β₁     missing data     1010     error";
+            position: absolute;
+            top: 60px;
+            left: -20px;
+            width: 120%;
+            color: rgba(125, 211, 252, 0.22);
+            font-size: 18px;
+            letter-spacing: 12px;
+            animation: floatText 12s linear infinite;
+            white-space: nowrap;
+        }
+
+        #game::after {
+            content: "∑     σ²     DAG     bias     NaN     X→Y     404     missing     0/1     confounding";
+            position: absolute;
+            top: 150px;
+            right: -30px;
+            width: 120%;
+            color: rgba(250, 204, 21, 0.20);
+            font-size: 20px;
+            letter-spacing: 14px;
+            animation: floatTextReverse 14s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes floatText {
+            from { transform: translateX(-60px); }
+            to { transform: translateX(80px); }
+        }
+
+        @keyframes floatTextReverse {
+            from { transform: translateX(80px); }
+            to { transform: translateX(-80px); }
         }
 
         #world {
@@ -39,7 +83,9 @@
             width: 100%;
             font-weight: bold;
             font-size: 22px;
-            color: #444;
+            color: white;
+            z-index: 3;
+            text-shadow: 0 0 8px #7dd3fc;
         }
 
         #player {
@@ -56,12 +102,14 @@
             justify-content: center;
             font-size: 13px;
             font-weight: bold;
+            z-index: 5;
+            box-shadow: 0 0 12px rgba(125, 211, 252, 0.8);
         }
 
         #obstacle {
             width: 70px;
             height: 45px;
-            background: red;
+            background: #ef4444;
             color: white;
             position: absolute;
             bottom: 0;
@@ -73,22 +121,65 @@
             font-size: 11px;
             font-weight: bold;
             animation: moveObstacle 2.2s linear infinite;
+            z-index: 5;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
         }
 
         #savior {
-            width: 80px;
-            height: 45px;
-            background: #16a34a;
-            color: white;
+            width: 85px;
+            height: 48px;
+            background: white;
+            color: #1e3a8a;
+            border: 2px solid #facc15;
             position: absolute;
             bottom: 70px;
             right: 40px;
-            border-radius: 8px;
+            border-radius: 10px;
             display: none;
             align-items: center;
             justify-content: center;
             font-size: 13px;
             font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 0 18px rgba(250, 204, 21, 0.9);
+        }
+
+        #stars {
+            position: absolute;
+            bottom: 118px;
+            right: 20px;
+            width: 130px;
+            height: 80px;
+            display: none;
+            z-index: 11;
+            font-size: 22px;
+            pointer-events: none;
+        }
+
+        #stars span {
+            position: absolute;
+            animation: sparkle 3s ease-out forwards;
+        }
+
+        #stars span:nth-child(1) { top: 5px; left: 10px; }
+        #stars span:nth-child(2) { top: 25px; left: 55px; }
+        #stars span:nth-child(3) { top: 0px; left: 90px; }
+        #stars span:nth-child(4) { top: 45px; left: 25px; }
+        #stars span:nth-child(5) { top: 50px; left: 100px; }
+
+        @keyframes sparkle {
+            0% {
+                opacity: 0;
+                transform: scale(0.4) rotate(0deg);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1.2) rotate(20deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.8) rotate(90deg);
+            }
         }
 
         @keyframes moveObstacle {
@@ -101,16 +192,21 @@
             font-size: 18px;
             font-weight: bold;
             min-height: 30px;
+            color: #facc15;
         }
 
         button {
             padding: 10px 18px;
             background: #1e3a8a;
             color: white;
-            border: none;
+            border: 1px solid #7dd3fc;
             border-radius: 6px;
             cursor: pointer;
             margin-top: 10px;
+        }
+
+        button:hover {
+            background: #2563eb;
         }
     </style>
 </head>
@@ -118,15 +214,24 @@
 <body>
 
     <h1>Sci-Runner</h1>
-    <p>Help Captain. Causal survive Real World Data.</p>
+    <p>Help Captain Causal survive Real World Data.</p>
 
-    <div id="score">Causal Confidence: 0</div>
+    <div id="score">Credibility Score: 0</div>
 
     <div id="game">
         <div id="world">REAL WORLD DATA</div>
         <div id="player">Cap. Causal</div>
         <div id="obstacle">👹<br>Confounder</div>
-        <div id="savior">✨<br>RCT</div>
+
+        <div id="savior">RCT 🛟</div>
+
+        <div id="stars">
+            <span>✨</span>
+            <span>🌟</span>
+            <span>⭐</span>
+            <span>✨</span>
+            <span>🌟</span>
+        </div>
     </div>
 
     <div id="message">Press SPACEBAR repeatedly to jump higher.</div>
@@ -137,6 +242,7 @@
         const player = document.getElementById("player");
         const obstacle = document.getElementById("obstacle");
         const savior = document.getElementById("savior");
+        const stars = document.getElementById("stars");
         const scoreDisplay = document.getElementById("score");
         const message = document.getElementById("message");
         const game = document.getElementById("game");
@@ -192,7 +298,7 @@
         setInterval(() => {
             if (!gameOver) {
                 score++;
-                scoreDisplay.innerText = "Credibility score: " + score;
+                scoreDisplay.innerText = "Credibility Score: " + score;
             }
         }, 200);
 
@@ -212,7 +318,13 @@
                 gameOver = true;
                 obstacle.style.animationPlayState = "paused";
                 savior.style.display = "flex";
+                stars.style.display = "block";
+
                 message.innerText = "Game Over: Reviewer #2 requests additional analyses.";
+
+                setTimeout(() => {
+                    stars.style.display = "none";
+                }, 3000);
             }
         }, 10);
 
@@ -222,9 +334,10 @@
             jumpLevel = 0;
             isJumping = false;
 
-            scoreDisplay.innerText = "Causal Confidence: 0";
+            scoreDisplay.innerText = "Credibility Score: 0";
             message.innerText = "Press SPACEBAR repeatedly to jump higher.";
             savior.style.display = "none";
+            stars.style.display = "none";
             player.style.bottom = "0px";
 
             obstacle.style.animation = "none";
