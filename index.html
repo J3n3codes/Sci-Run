@@ -14,13 +14,7 @@
         }
 
         h1 {
-            margin-top: 10px;
             color: #1e3a8a;
-        }
-
-        #subtitle {
-            font-size: 16px;
-            margin-bottom: 15px;
         }
 
         #score {
@@ -43,7 +37,6 @@
             position: absolute;
             top: 10px;
             width: 100%;
-            text-align: center;
             font-weight: bold;
             font-size: 22px;
             color: #444;
@@ -66,48 +59,41 @@
         }
 
         #obstacle {
-            width: 120px;
-            height: 60px;
-            background: #d1d5db;
-            color: black;
+            width: 70px;
+            height: 45px;
+            background: red;
+            color: white;
             position: absolute;
             bottom: 0;
-            right: -120px;
+            right: -70px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: bold;
             animation: moveObstacle 2.2s linear infinite;
         }
 
+        #savior {
+            width: 80px;
+            height: 45px;
+            background: #16a34a;
+            color: white;
+            position: absolute;
+            bottom: 70px;
+            right: 40px;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
         @keyframes moveObstacle {
-            from {
-                right: -120px;
-            }
-
-            to {
-                right: 850px;
-            }
-        }
-
-        .jump {
-            animation: jump 0.6s ease;
-        }
-
-        @keyframes jump {
-            0% {
-                bottom: 0;
-            }
-
-            50% {
-                bottom: 120px;
-            }
-
-            100% {
-                bottom: 0;
-            }
+            from { right: -70px; }
+            to { right: 850px; }
         }
 
         #message {
@@ -132,77 +118,70 @@
 <body>
 
     <h1>Sci-Runner</h1>
+    <p>Help Dr. Causal survive Real World Data.</p>
 
-    <div id="subtitle">
-        Help Dr. Causal survive Real World Data.
-    </div>
-
-    <div id="score">
-        Causal Confidence: 0
-    </div>
+    <div id="score">Causal Confidence: 0</div>
 
     <div id="game">
-
-        <div id="world">
-            REAL WORLD DATA
-        </div>
-
-        <div id="player">
-            Dr. Causal
-        </div>
-
-        <div id="obstacle">
-            Confounder
-        </div>
-
+        <div id="world">REAL WORLD DATA</div>
+        <div id="player">Dr. Causal</div>
+        <div id="obstacle">Confounder</div>
+        <div id="savior">RCT 🛟</div>
     </div>
 
-    <div id="message">
-        Press SPACEBAR or click inside the box to jump.
-    </div>
+    <div id="message">Press SPACEBAR repeatedly to jump higher.</div>
 
-    <button onclick="restartGame()">
-        Restart
-    </button>
+    <button onclick="restartGame()">Restart</button>
 
     <script>
-
         const player = document.getElementById("player");
         const obstacle = document.getElementById("obstacle");
+        const savior = document.getElementById("savior");
         const scoreDisplay = document.getElementById("score");
         const message = document.getElementById("message");
         const game = document.getElementById("game");
 
         let score = 0;
         let gameOver = false;
-
-        const gameOverMessages = [
-            "Reviewer #2 requests additional analyses.",
-            "Correlation ≠ Causation.",
-            "A confounder has entered the chat.",
-            "Treatment effect not identifiable.",
-            "Selection bias detected.",
-            "Your DAG was incorrect.",
-            "The assumptions were violated.",
-            "Please control for 47 additional variables.",
-            "Reviewer #2 was not convinced.",
-            "Major revisions required."
-        ];
+        let jumpLevel = 0;
+        let isJumping = false;
 
         function jump() {
+            if (gameOver) return;
 
-            if (!player.classList.contains("jump") && !gameOver) {
+            jumpLevel++;
 
-                player.classList.add("jump");
+            if (jumpLevel > 3) {
+                jumpLevel = 3;
+            }
+
+            let jumpHeight = 90;
+
+            if (jumpLevel === 2) {
+                jumpHeight = 150;
+            }
+
+            if (jumpLevel === 3) {
+                jumpHeight = 215;
+            }
+
+            isJumping = true;
+            player.style.transition = "bottom 0.25s ease-out";
+            player.style.bottom = jumpHeight + "px";
+
+            setTimeout(() => {
+                player.style.transition = "bottom 0.45s ease-in";
+                player.style.bottom = "0px";
 
                 setTimeout(() => {
-                    player.classList.remove("jump");
-                }, 600);
-            }
+                    isJumping = false;
+                    jumpLevel = 0;
+                }, 450);
+
+            }, 350);
         }
 
-        document.addEventListener("keydown", function (event) {
-
+        document.addEventListener("keydown", function(event) {
             if (event.code === "Space") {
                 jump();
             }
@@ -211,83 +190,50 @@
         game.addEventListener("click", jump);
 
         setInterval(() => {
-
             if (!gameOver) {
-
                 score++;
-
-                scoreDisplay.innerText =
-                    "Causal Confidence: " + score;
+                scoreDisplay.innerText = "Causal Confidence: " + score + "%";
             }
-
         }, 200);
 
         setInterval(() => {
+            if (gameOver) return;
 
-            const playerBottom =
-                parseInt(
-                    window.getComputedStyle(player)
-                        .getPropertyValue("bottom")
-                );
-
-            const obstacleLeft =
-                obstacle.getBoundingClientRect().left;
-
-            const playerLeft =
-                player.getBoundingClientRect().left;
-
-            const playerRight =
-                player.getBoundingClientRect().right;
+            const playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
+            const obstacleLeft = obstacle.getBoundingClientRect().left;
+            const playerLeft = player.getBoundingClientRect().left;
+            const playerRight = player.getBoundingClientRect().right;
 
             if (
                 obstacleLeft < playerRight &&
-                obstacleLeft + 120 > playerLeft &&
-                playerBottom < 60
+                obstacleLeft + 70 > playerLeft &&
+                playerBottom < 45
             ) {
-
                 gameOver = true;
-
                 obstacle.style.animationPlayState = "paused";
-
-                const randomMessage =
-                    gameOverMessages[
-                    Math.floor(
-                        Math.random() *
-                        gameOverMessages.length
-                    )
-                    ];
-
-                message.innerText =
-                    "Game Over: " + randomMessage;
+                savior.style.display = "flex";
+                message.innerText = "Game Over: Reviewer #2 requests additional analyses. RCT appears as the funny savior.";
             }
-
         }, 10);
 
         function restartGame() {
-
             score = 0;
-
             gameOver = false;
+            jumpLevel = 0;
+            isJumping = false;
 
-            scoreDisplay.innerText =
-                "Causal Confidence: 0";
-
-            message.innerText =
-                "Press SPACEBAR or click inside the box to jump.";
+            scoreDisplay.innerText = "Causal Confidence: 0";
+            message.innerText = "Press SPACEBAR repeatedly to jump higher.";
+            savior.style.display = "none";
+            player.style.bottom = "0px";
 
             obstacle.style.animation = "none";
 
             setTimeout(() => {
-
-                obstacle.style.animation =
-                    "moveObstacle 2.2s linear infinite";
-
-                obstacle.style.animationPlayState =
-                    "running";
-
+                obstacle.style.animation = "moveObstacle 2.2s linear infinite";
+                obstacle.style.animationPlayState = "running";
             }, 50);
         }
-
     </script>
 
 </body>
