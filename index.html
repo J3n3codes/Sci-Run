@@ -298,7 +298,7 @@
         setInterval(() => {
             if (!gameOver) {
                 score++;
-                scoreDisplay.innerText = "Credibility Score: " + score;
+                scoreDisplay.innerText = "Score: " + score;
             }
         }, 200);
 
@@ -334,7 +334,7 @@
             jumpLevel = 0;
             isJumping = false;
 
-            scoreDisplay.innerText = "Credibility Score: 0";
+            scoreDisplay.innerText = "Score: 0";
             message.innerText = "Press SPACEBAR repeatedly to jump higher.";
             savior.style.display = "none";
             stars.style.display = "none";
