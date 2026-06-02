@@ -1,191 +1,294 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Data Scientist Runner</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      text-align: center;
-    }
+    <meta charset="UTF-8">
+    <title>Sci-Runner</title>
 
-    h1 {
-      margin-top: 30px;
-    }
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
 
-    #game {
-      width: 800px;
-      height: 300px;
-      border: 2px solid #222;
-      margin: 30px auto;
-      background: white;
-      position: relative;
-      overflow: hidden;
-    }
+        h1 {
+            margin-top: 10px;
+            color: #1e3a8a;
+        }
 
-    #player {
-      width: 50px;
-      height: 50px;
-      background: #222;
-      position: absolute;
-      bottom: 0;
-      left: 80px;
-      border-radius: 8px;
-    }
+        #subtitle {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
 
-    #player::after {
-      content: "DS";
-      color: white;
-      font-weight: bold;
-      position: absolute;
-      top: 15px;
-      left: 12px;
-    }
+        #score {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-    #obstacle {
-      width: 40px;
-      height: 60px;
-      background: crimson;
-      position: absolute;
-      bottom: 0;
-      right: -40px;
-      border-radius: 5px;
-      animation: moveObstacle 2s linear infinite;
-    }
+        #game {
+            width: 800px;
+            height: 300px;
+            border: 3px solid black;
+            background: white;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+        }
 
-    #obstacle::after {
-      content: "NA";
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      position: absolute;
-      top: 20px;
-      left: 8px;
-    }
+        #world {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            font-size: 22px;
+            color: #444;
+        }
 
-    @keyframes moveObstacle {
-      from {
-        right: -40px;
-      }
-      to {
-        right: 840px;
-      }
-    }
+        #player {
+            width: 90px;
+            height: 50px;
+            background: #1e3a8a;
+            color: white;
+            position: absolute;
+            bottom: 0;
+            left: 80px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
 
-    .jump {
-      animation: jump 0.6s ease;
-    }
+        #obstacle {
+            width: 120px;
+            height: 60px;
+            background: #d1d5db;
+            color: black;
+            position: absolute;
+            bottom: 0;
+            right: -120px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            animation: moveObstacle 2.2s linear infinite;
+        }
 
-    @keyframes jump {
-      0% { bottom: 0; }
-      50% { bottom: 120px; }
-      100% { bottom: 0; }
-    }
+        @keyframes moveObstacle {
+            from {
+                right: -120px;
+            }
 
-    #score {
-      font-size: 22px;
-      font-weight: bold;
-    }
+            to {
+                right: 850px;
+            }
+        }
 
-    #message {
-      font-size: 16px;
-      margin-top: 10px;
-    }
+        .jump {
+            animation: jump 0.6s ease;
+        }
 
-    button {
-      padding: 10px 18px;
-      border: none;
-      background: #222;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-  </style>
+        @keyframes jump {
+            0% {
+                bottom: 0;
+            }
+
+            50% {
+                bottom: 120px;
+            }
+
+            100% {
+                bottom: 0;
+            }
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        button {
+            padding: 10px 18px;
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
 
-  <h1>Data Scientist Runner</h1>
-  <p>Jump over missing values and messy data.</p>
+    <h1>Sci-Runner</h1>
 
-  <div id="score">Score: 0</div>
+    <div id="subtitle">
+        Help Dr. Causal survive Real World Data.
+    </div>
 
-  <div id="game">
-    <div id="player"></div>
-    <div id="obstacle"></div>
-  </div>
+    <div id="score">
+        Causal Confidence: 0
+    </div>
 
-  <p id="message">Press Spacebar or click the game to jump.</p>
-  <button onclick="restartGame()">Restart Game</button>
+    <div id="game">
 
-  <script>
-    const player = document.getElementById("player");
-    const obstacle = document.getElementById("obstacle");
-    const scoreDisplay = document.getElementById("score");
-    const message = document.getElementById("message");
-    const game = document.getElementById("game");
+        <div id="world">
+            REAL WORLD DATA
+        </div>
 
-    let score = 0;
-    let gameOver = false;
+        <div id="player">
+            Dr. Causal
+        </div>
 
-    function jump() {
-      if (!player.classList.contains("jump") && !gameOver) {
-        player.classList.add("jump");
+        <div id="obstacle">
+            Confounder
+        </div>
 
-        setTimeout(() => {
-          player.classList.remove("jump");
-        }, 600);
-      }
-    }
+    </div>
 
-    document.addEventListener("keydown", function(event) {
-      if (event.code === "Space") {
-        jump();
-      }
-    });
+    <div id="message">
+        Press SPACEBAR or click inside the box to jump.
+    </div>
 
-    game.addEventListener("click", jump);
+    <button onclick="restartGame()">
+        Restart
+    </button>
 
-    let scoreInterval = setInterval(() => {
-      if (!gameOver) {
-        score++;
-        scoreDisplay.innerText = "Score: " + score;
-      }
-    }, 200);
+    <script>
 
-    let collisionCheck = setInterval(() => {
-      const playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
-      const obstacleLeft = obstacle.getBoundingClientRect().left;
-      const playerLeft = player.getBoundingClientRect().left;
-      const playerRight = player.getBoundingClientRect().right;
+        const player = document.getElementById("player");
+        const obstacle = document.getElementById("obstacle");
+        const scoreDisplay = document.getElementById("score");
+        const message = document.getElementById("message");
+        const game = document.getElementById("game");
 
-      if (
-        obstacleLeft < playerRight &&
-        obstacleLeft + 40 > playerLeft &&
-        playerBottom < 60
-      ) {
-        gameOver = true;
-        obstacle.style.animationPlayState = "paused";
-        message.innerText = "Game over. You hit messy data!";
-      }
-    }, 10);
+        let score = 0;
+        let gameOver = false;
 
-    function restartGame() {
-      score = 0;
-      gameOver = false;
-      scoreDisplay.innerText = "Score: 0";
-      message.innerText = "Press Spacebar or click the game to jump.";
-      obstacle.style.animation = "none";
+        const gameOverMessages = [
+            "Reviewer #2 requests additional analyses.",
+            "Correlation ≠ Causation.",
+            "A confounder has entered the chat.",
+            "Treatment effect not identifiable.",
+            "Selection bias detected.",
+            "Your DAG was incorrect.",
+            "The assumptions were violated.",
+            "Please control for 47 additional variables.",
+            "Reviewer #2 was not convinced.",
+            "Major revisions required."
+        ];
 
-      setTimeout(() => {
-        obstacle.style.animation = "moveObstacle 2s linear infinite";
-        obstacle.style.animationPlayState = "running";
-      }, 50);
-    }
-  </script>
+        function jump() {
+
+            if (!player.classList.contains("jump") && !gameOver) {
+
+                player.classList.add("jump");
+
+                setTimeout(() => {
+                    player.classList.remove("jump");
+                }, 600);
+            }
+        }
+
+        document.addEventListener("keydown", function (event) {
+
+            if (event.code === "Space") {
+                jump();
+            }
+        });
+
+        game.addEventListener("click", jump);
+
+        setInterval(() => {
+
+            if (!gameOver) {
+
+                score++;
+
+                scoreDisplay.innerText =
+                    "Causal Confidence: " + score;
+            }
+
+        }, 200);
+
+        setInterval(() => {
+
+            const playerBottom =
+                parseInt(
+                    window.getComputedStyle(player)
+                        .getPropertyValue("bottom")
+                );
+
+            const obstacleLeft =
+                obstacle.getBoundingClientRect().left;
+
+            const playerLeft =
+                player.getBoundingClientRect().left;
+
+            const playerRight =
+                player.getBoundingClientRect().right;
+
+            if (
+                obstacleLeft < playerRight &&
+                obstacleLeft + 120 > playerLeft &&
+                playerBottom < 60
+            ) {
+
+                gameOver = true;
+
+                obstacle.style.animationPlayState = "paused";
+
+                const randomMessage =
+                    gameOverMessages[
+                    Math.floor(
+                        Math.random() *
+                        gameOverMessages.length
+                    )
+                    ];
+
+                message.innerText =
+                    "Game Over: " + randomMessage;
+            }
+
+        }, 10);
+
+        function restartGame() {
+
+            score = 0;
+
+            gameOver = false;
+
+            scoreDisplay.innerText =
+                "Causal Confidence: 0";
+
+            message.innerText =
+                "Press SPACEBAR or click inside the box to jump.";
+
+            obstacle.style.animation = "none";
+
+            setTimeout(() => {
+
+                obstacle.style.animation =
+                    "moveObstacle 2.2s linear infinite";
+
+                obstacle.style.animationPlayState =
+                    "running";
+
+            }, 50);
+        }
+
+    </script>
 
 </body>
 </html>
